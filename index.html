@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>部分视频展示 - 个人作品集</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3a86ff;
+            --secondary-color: #8338ec;
+            --background-color: #f8f9fa;
+            --card-color: #ffffff;
+            --text-color: #333333;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --animation-time: 0.3s;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'Segoe UI', Arial, sans-serif;
+            background: var(--background-color);
+            color: var(--text-color);
+            padding: 30px;
+            background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            display: inline-block;
+        }
+
+        .sub-title {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        /* 介绍部分的样式 */
+        .introduction {
+            background-color: var(--card-color);
+            border-radius: 12px;
+            padding: 40px;
+            margin-top: 80px;
+            margin-bottom: 50px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1s ease-out;
+            line-height: 1.7;
+        }
+
+        .introduction h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .introduction p {
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+        }
+
+        .introduction h3 {
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            color: var(--secondary-color);
+        }
+
+        .introduction h4 {
+            font-size: 1.25rem;
+            margin: 1.5rem 0 1rem;
+            color: #444;
+            border-left: 4px solid var(--primary-color);
+            padding-left: 10px;
+        }
+
+        .introduction ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .introduction li {
+            margin-bottom: 0.8rem;
+        }
+
+        .skill-item {
+            font-weight: 600;
+        }
+
+        .contact-info {
+            background-color: rgba(58, 134, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 2rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* 画廊部分样式 */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        .section-title {
+            margin-bottom: 30px; 
+            text-align: center; 
+            color: var(--primary-color);
+            font-size: 2rem;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .item {
+            position: relative;
+            background-color: var(--card-color);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px var(--shadow-color);
+            transition: all var(--animation-time) cubic-bezier(0.25, 0.8, 0.25, 1);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: itemAppear 0.5s forwards;
+        }
+
+        @keyframes itemAppear {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .item:nth-child(1) { animation-delay: 0.1s; }
+        .item:nth-child(2) { animation-delay: 0.2s; }
+        .item:nth-child(3) { animation-delay: 0.3s; }
+        .item:nth-child(4) { animation-delay: 0.4s; }
+        .item:nth-child(5) { animation-delay: 0.5s; }
+        .item:nth-child(6) { animation-delay: 0.6s; }
+
+        .item:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+
+        .item-image-container {
+            position: relative;
+            overflow: hidden;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+        }
+
+        .item img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            cursor: pointer;
+            transition: transform 0.5s ease;
+        }
+
+        .item:hover img {
+            transform: scale(1.08);
+        }
+
+        .item.has-video .play-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            transition: opacity var(--animation-time) ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .item.has-video:hover .play-overlay {
+            opacity: 1;
+        }
+
+        .play-btn {
+            width: 70px;
+            height: 70px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--primary-color);
+            font-size: 26px;
+            transform: scale(0.8);
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .item.has-video:hover .play-btn {
+            transform: scale(1);
+        }
+
+        .item-info {
+            padding: 20px;
+        }
+
+        .item-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .item-title i {
+            margin-right: 8px;
+            color: var(--primary-color);
+        }
+
+        .item-description {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.visible {
+            opacity: 1;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.visible .modal-content {
+            transform: scale(1);
+        }
+
+        .modal video {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: -50px;
+            right: 0;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.2);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .video-title {
+            position: absolute;
+            bottom: -40px;
+            left: 0;
+            color: white;
+            font-size: 16px;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Loading animation */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--background-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(58, 134, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .introduction {
+                padding: 25px;
+            }
+
+            .introduction h2 {
+                font-size: 1.8rem;
+            }
+
+            .introduction h3 {
+                font-size: 1.4rem;
+            }
+
+            .introduction h4 {
+                font-size: 1.2rem;
+            }
+            
+            .gallery {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 20px;
+            }
+            
+            .play-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .sub-title {
+                font-size: 1rem;
+            }
+
+            .introduction {
+                padding: 20px;
+            }
+        }
+
+        /* Dark mode */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background-color: #121212;
+                --card-color: #1e1e1e;
+                --text-color: #e0e0e0;
+                --shadow-color: rgba(0, 0, 0, 0.3);
+            }
+            
+            body {
+                background-image: linear-gradient(135deg, #111111 0%, #2c2c2c 100%);
+            }
+            
+            .sub-title {
+                color: #aaa;
+            }
+            
+            .item-description {
+                color: #999;
+            }
+
+            .introduction {
+                border: 1px solid #333;
+            }
+
+            .introduction h4 {
+                color: #ccc;
+            }
+
+            .contact-info {
+                background-color: rgba(58, 134, 255, 0.2);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loader">
+        <div class="spinner"></div>
+    </div>
+    
+    <div class="container">
+        <header>
+            <h1>部分视频展示</h1>
+            <div class="sub-title">点击图片观看完整视频</div>
+        </header>
+
+        <!-- 视频展示部分放在上面 -->
+        <h2 class="section-title">作品展示</h2>
+        <div class="gallery" id="gallery"></div>
+        
+        <!-- 个人介绍部分放在下面 -->
+        <section class="introduction">
+            <h2>个人介绍与视频创作理念</h2>
+            <p>我是一名专注于视频创作的专业人士，结合扎实的技术技能、独特的创作见解和敏锐的市场洞察，致力于为品牌和本地商家打造兼具创意与传播力的视频内容。以下是我的核心能力、对视频创作的理解以及为客户带来的价值：</p>
+            
+            <h3>核心技能与经验</h3>
+            <ul>
+                <li><span class="skill-item">AI技术专长</span><br>
+                我精通AI视频创作和Stable Diffusion技术，能够利用人工智能生成高质量的视觉内容。此外，我掌握AI配音技术，可以1:1复刻任何人的声音，为广告宣传和创意视频提供个性化的声音解决方案。</li>
+                
+                <li><span class="skill-item">视频拍摄与剪辑</span><br>
+                我具备扎实的视频拍摄和剪辑能力，创作风格独特且实用。我擅长将广告内容与文化元素相结合，例如在拍摄大足本地餐馆广告时融入大足石刻和佛教文化故事，提升内容的吸引力和深度。</li>
+                
+                <li><span class="skill-item">抖音运营洞察</span><br>
+                我深入了解抖音平台的运行规则和用户行为，能够根据平台特性制定精准的视频营销策略，确保内容有效触达目标受众并引发共鸣。</li>
+                
+                <li><span class="skill-item">网页制作与技术学习</span><br>
+                我具备网页制作和部署的能力，并且学习能力强，乐于钻研新技术。无论是项目需求调整还是行业工具更新，我都能快速上手并保持技术领先。</li>
+            </ul>
+            
+            <h3>视频创作的独特见解</h3>
+            <ul>
+                <li><span class="skill-item">故事讲述为核心</span><br>
+                我认为，一个成功的视频关键在于能否讲好一个引人入胜的故事，而非仅仅依赖拍摄或剪辑技术的精湛。我擅长将广告信息融入生动叙事，让观众在享受内容的同时自然接受品牌价值。</li>
+                
+                <li><span class="skill-item">AI工具的创新应用</span><br>
+                我不断探索AI工具的多种组合方式，创造传统剪辑难以企及的独特效果。这种创新能力让我能为客户提供差异化的视频解决方案，提升内容竞争力。</li>
+                
+                <li><span class="skill-item">实用主义的"野生"创作</span><br>
+                我的视频拍摄与创作经验源于实践，注重实用效果而非形式化技术展示。我的目标是通过内容设计实现传播价值，让视频真正"活"起来。</li>
+            </ul>
+            
+            <h3>用户心理与市场策略</h3>
+            <ul>
+                <li><span class="skill-item">精准的用户画像</span><br>
+                在创作视频前，我会深入分析目标受众。例如，为渔具销售制作视频时，我会考虑用户的年龄、兴趣、工作与家庭背景等，构建详细的用户画像，确保内容贴合需求。</li>
+                
+                <li><span class="skill-item">情感与热点的融合</span><br>
+                我善于将产品与情感故事（如男女关系，家庭教育，家庭关系，人际关系等）或抖音热点相结合，增强视频的趣味性和时效性。例如，拍摄钓鱼相关视频时，我可能会融入情感元素并紧扣时事，提升观众的共鸣感。</li>
+                
+                <li><span class="skill-item">敏锐的社会洞察</span><br>
+                作为第一批使用GPT的用户，我对社会趋势和人群心理变化有广泛了解。这种洞察力让我能创作出更具针对性和感染力的内容。</li>
+            </ul>
+            
+            <h3>营销思维与客户导向</h3>
+            <ul>
+                <li><span class="skill-item">丰富的销售经验</span><br>
+                我拥有多年销售经验，并在家族生意中积累了市场洞察，能够站在客户的角度思考问题，精准把握他们的需求和痛点。</li>
+                
+                <li><span class="skill-item">营销导向的创作</span><br>
+                我深知视频创作的最终目的是服务于营销，因此在创作中始终以营销目标为导向，确保视频不仅吸引眼球，更能推动品牌传播和销售转化。</li>
+            </ul>
+            
+            <h3>我的价值承诺</h3>
+            <p>凭借AI技术、创作经验和市场理解，我致力于为客户提供创新、高效且引人注目的视频内容。无论是本地商家广告还是品牌宣传，我都能帮助您在竞争激烈的市场中脱颖而出，让视频不仅是广告，更成为连接用户情感的桥梁。</p>
+            
+            <div class="contact-info">
+                <i class="fas fa-phone-alt"></i> 联系电话/微信：15320552195
+            </div>
+        </section>
+    </div>
+
+    <div class="modal" id="videoModal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeModal"><i class="fas fa-times"></i></span>
+            <video id="videoPlayer" controls></video>
+            <div class="video-title" id="videoTitle"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 显示加载器
+            const loader = document.querySelector('.loader');
+            
+            // 媒体文件列表
+            const mediaFiles = [
+                { id: 1, img: '1.jpg', video: '1.mp4', title: '视频 1', description: '点击观看完整视频' },
+                { id: 2, img: '2.jpg', video: '2.mp4', title: '视频 2', description: '点击观看完整视频' },
+                { id: 3, img: '3.jpg', video: '3.mp4', title: '视频 3', description: '点击观看完整视频' },
+                { id: 4, img: '4.jpg', video: '4.mp4', title: '视频 4', description: '点击观看完整视频' },
+                { id: 5, img: '5.jpg', video: '5.mp4', title: '视频 5', description: '点击观看完整视频' },
+                { id: 6, img: '6.jpg', video: '6.mp4', title: '视频 6', description: '点击观看完整视频' }
+            ];
+
+            const gallery = document.getElementById('gallery');
+            const videoModal = document.getElementById('videoModal');
+            const videoPlayer = document.getElementById('videoPlayer');
+            const videoTitle = document.getElementById('videoTitle');
+            const closeModal = document.getElementById('closeModal');
+
+            // 预加载图片
+            const preloadImages = () => {
+                const promises = mediaFiles.map(file => {
+                    return new Promise((resolve, reject) => {
+                        const img = new Image();
+                        img.src = file.img;
+                        img.onload = resolve;
+                        img.onerror = reject;
+                    });
+                });
+                
+                return Promise.all(promises);
+            };
+
+            // 生成图片列表
+            const createGallery = () => {
+                mediaFiles.forEach(file => {
+                    const item = document.createElement('div');
+                    item.className = 'item has-video';
+                    
+                    const imageContainer = document.createElement('div');
+                    imageContainer.className = 'item-image-container';
+                    
+                    const img = document.createElement('img');
+                    img.src = file.img;
+                    img.alt = file.title;
+                    
+                    const playOverlay = document.createElement('div');
+                    playOverlay.className = 'play-overlay';
+                    
+                    const playBtn = document.createElement('div');
+                    playBtn.className = 'play-btn';
+                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    
+                    playOverlay.appendChild(playBtn);
+                    imageContainer.appendChild(img);
+                    imageContainer.appendChild(playOverlay);
+                    
+                    const info = document.createElement('div');
+                    info.className = 'item-info';
+                    
+                    const title = document.createElement('div');
+                    title.className = 'item-title';
+                    title.innerHTML = `<i class="fas fa-video"></i>${file.title}`;
+                    
+                    const description = document.createElement('div');
+                    description.className = 'item-description';
+                    description.textContent = file.description;
+                    
+                    info.appendChild(title);
+                    info.appendChild(description);
+                    
+                    item.appendChild(imageContainer);
+                    item.appendChild(info);
+                    gallery.appendChild(item);
+                    
+                    // 添加点击事件
+                    item.addEventListener('click', function() {
+                        openVideoModal(file);
+                    });
+                });
+            };
+
+            // 打开视频模态框
+            const openVideoModal = (file) => {
+                videoPlayer.src = file.video;
+                videoTitle.textContent = file.title;
+                videoModal.style.display = 'flex';
+                
+                // 添加动画类
+                setTimeout(() => {
+                    videoModal.classList.add('visible');
+                }, 10);
+                
+                videoPlayer.play();
+            };
+            
+            // 关闭视频模态框
+            const closeVideoModal = () => {
+                videoModal.classList.remove('visible');
+                
+                setTimeout(() => {
+                    videoModal.style.display = 'none';
+                    videoPlayer.pause();
+                    videoPlayer.src = '';
+                }, 300);
+            };
+            
+            closeModal.addEventListener('click', closeVideoModal);
+            
+            // 点击模态框背景也可以关闭
+            videoModal.addEventListener('click', function(e) {
+                if (e.target === videoModal) {
+                    closeVideoModal();
+                }
+            });
+            
+            // ESC键关闭模态框
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && videoModal.style.display === 'flex') {
+                    closeVideoModal();
+                }
+            });
+
+            // 初始化
+            preloadImages()
+                .then(() => {
+                    // 图片预加载完成，隐藏加载器
+                    setTimeout(() => {
+                        loader.classList.add('hidden');
+                        
+                        // 创建画廊
+                        setTimeout(createGallery, 300);
+                    }, 500);
+                })
+                .catch(() => {
+                    // 即使有些图片加载失败，也创建画廊
+                    loader.classList.add('hidden');
+                    createGallery();
+                });
+            
+            // 为防止图片加载时间过长，设置超时
+            setTimeout(() => {
+                if (!loader.classList.contains('hidden')) {
+                    loader.classList.add('hidden');
+                    createGallery();
+                }
+            }, 3000);
+        });
+    </script>
+</body>
+</html> 
